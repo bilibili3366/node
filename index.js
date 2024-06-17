@@ -7,7 +7,7 @@ const path = require('path');
 
 // 这是我们配置的域名，我们可以访问这些域名，拿到对应的结果
 let hosts = {
-    'api.zeroapi.dns.navy': 'http://data.zero777.dns.army',
+    'api.zeroapi.dns.navy': 'https://data.zero777.dns.army',
     // 'as.com': 'https://localhost:8081',// 也不支持https
 }
 
@@ -19,7 +19,7 @@ let server = https.createServer((req, res) => {
     let host = req.headers['host'].split(':')[0]
     console.log(666.789, host, hosts[host])
     proxy.web(req, res, {
-        target: hosts[host] || 'http://data.zero777.dns.army'
+        target: hosts[host] || 'https://data.zero777.dns.army'
     })
 })
 
