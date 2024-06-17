@@ -24,7 +24,7 @@ var server = http.createServer(function (req, res) {
   console.log(`Request URL: ${req.url}`);
 
   switch (host) {
-    case 'node-2rj6.onrender.com': // 替换为你的实际域名
+    case 'api.zeroapi.dns.navy': // 替换为你的实际域名
       proxy.web(req, res, { target: 'http://api.7779888.shop' });
       break;
     
