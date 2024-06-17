@@ -19,7 +19,7 @@ var server = require('http').createServer(function(req, res) {
   console.log("client ip:" + ip + ", host:" + host);
    
   switch(host){
-    case localhost:
+    case host:
         proxy.web(req, res, { target: 'http://api.7779888.shop' });
     break;
 
