@@ -19,21 +19,10 @@ var server = require('http').createServer(function(req, res) {
   console.log("client ip:" + ip + ", host:" + host);
    
   switch(host){
-    case 'aaaa.com':
-    case 'node-2rj6.onrender.com':
+    case localhost:
         proxy.web(req, res, { target: 'http://api.7779888.shop' });
     break;
-    case 'vps.cccc.com':
-        proxy.web(req, res, { target: 'http://xyd.bbbbb.com:8080' });
-    break;
-    case 'dddd.com':
-    case 'www.dddd.com':
-        proxy.web(req, res, { target: 'http://localhost:81' });
-    break;
-    case 'eeeeee.com.cn':
-    case 'www.eeee.com.cn':
-        proxy.web(req, res, { target: 'http://eeeee.com.cn:8082' });
-    break;
+
     default:
         res.writeHead(200, {
             'Content-Type': 'text/plain'
