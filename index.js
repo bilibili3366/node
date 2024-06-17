@@ -37,8 +37,8 @@ var server = http.createServer(function (req, res) {
 
   // 明确的路由条件
   if (host === 'api.zeroapi.dns.navy') { // 替换为你的实际域名
-    console.log(`Proxying request for ${host} to https://api.7779888.shop`);
-    proxy.web(req, res, { target: 'https://api.7779888.shop' }, function (e) {
+    console.log(`Proxying request for ${host} to http://data.zero777.dns.army`);
+    proxy.web(req, res, { target: 'http://data.zero777.dns.army' }, function (e) {
       if (e) {
         console.error('Proxy error:', e);
         res.writeHead(500, {
