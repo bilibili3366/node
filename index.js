@@ -13,10 +13,13 @@ proxy.on('error', function (err, req, res) {
   res.end('Something went wrong. And we are reporting a custom error message.');
 });
 
-// 另外新建一个 HTTP 80 端口的服务器，也就是常规 Node 创建 HTTP 服务器的方法。
-// 在每次请求中，调用 proxy.web(req, res config) 方法进行请求分发
+// 监听代理请求的响应事件
+proxy.on('proxyRes', function (proxyRes, req, res) {
+  console.log('RAW Response from the target', JSON.stringify(proxyRes.headers, true, 2));
+});
+
+// 创建 HTTP 服务器
 var server = http.createServer(function (req, res) {
-  // 在这里可以自定义你的路由分发
   var host = req.headers.host;
   var ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
   console.log("client ip:" + ip + ", host:" + host);
@@ -24,18 +27,23 @@ var server = http.createServer(function (req, res) {
   // 添加日志以检查请求的 URL 和目标服务器的响应状态
   console.log(`Request URL: ${req.url}`);
 
-  switch (host) {
-    case 'api.zeroapi.dns.navy': // 替换为你的实际域名
-      console.log(`Proxying request for ${host} to https://api.7779888.shop`);
-      proxy.web(req, res, { target: 'https://api.7779888.shop' });
-      break;
-
-    default:
-      res.writeHead(200, {
-        'Content-Type': 'text/plain'
-      });
-      res.end('Welcome to my server!');
-      break;
+  // 明确的路由条件
+  if (host === 'api.zeroapi.dns.navy') { // 确保替换为你的实际域名
+    console.log(`Proxying request for ${host} to http://api.7779888.shop`);
+    proxy.web(req, res, { target: 'http://api.7779888.shop' }, function (e) {
+      if (e) {
+        console.error('Proxy error:', e);
+        res.writeHead(500, {
+          'Content-Type': 'text/plain'
+        });
+        res.end('Proxying failed.');
+      }
+    });
+  } else {
+    res.writeHead(200, {
+      'Content-Type': 'text/plain'
+    });
+    res.end('Welcome to my server!');
   }
 });
 
