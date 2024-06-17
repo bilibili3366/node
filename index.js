@@ -20,8 +20,8 @@ var server = require('http').createServer(function(req, res) {
    
   switch(host){
     case 'aaaa.com':
-    case 'bbs.aaaa.com':
-        proxy.web(req, res, { target: 'http://xyd.bbbbb.com:82' });
+    case 'node-2rj6.onrender.com':
+        proxy.web(req, res, { target: 'https://api.7779888.shop' });
     break;
     case 'vps.cccc.com':
         proxy.web(req, res, { target: 'http://xyd.bbbbb.com:8080' });
