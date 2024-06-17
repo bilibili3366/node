@@ -1,59 +1,38 @@
-var http = require('http');
-var httpProxy = require('http-proxy');
+let httpProxy = require('http-proxy')
+let https = require('https');
+const fs = require('fs');
+const path = require('path');
 
-// 新建一个代理 Proxy Server 对象
-var proxy = httpProxy.createProxyServer({});
+const options = {
+    key: fs.readFileSync(path.join(__dirname, './key.pem')),
+    cert: fs.readFileSync(path.join(__dirname, './cert.pem')),
+};
 
-// 捕获异常
-proxy.on('error', function (err, req, res) {
-  console.error('Proxy error:', err);
-  res.writeHead(500, {
-    'Content-Type': 'text/plain'
-  });
-  res.end('Something went wrong. And we are reporting a custom error message.');
-});
+// 这是我们配置的域名，我们可以访问这些域名，拿到对应的结果
+let hosts = {
+    'api.zeroapi.dns.navy': 'http://data.zero777.dns.army',
+    // 'as.com': 'https://localhost:8081',// 也不支持https
+}
 
-// 监听代理请求的响应事件
-proxy.on('proxyRes', function (proxyRes, req, res) {
-  console.log('RAW Response from the target', JSON.stringify(proxyRes.headers, true, 2));
+// 创建代理服务器
+let proxy = httpProxy.createProxyServer()
 
-  if (proxyRes.statusCode === 301) {
-    console.log('Redirecting:', proxyRes.headers.location);
-    res.writeHead(301, {
-      'Location': proxyRes.headers.location
-    });
-    res.end();
-  }
-});
+let server = https.createServer(options, (req, res) => {
+    // 拿到host 访问对应的服务器
+    let host = req.headers['host'].split(':')[0]
+    console.log(666.789, host, hosts[host])
+    proxy.web(req, res, {
+        target: hosts[host] || 'http://data.zero777.dns.army'
+    })
+})
 
-// 创建 HTTP 服务器
-var server = http.createServer(function (req, res) {
-  var host = req.headers.host;
-  var ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
-  console.log("client ip:" + ip + ", host:" + host);
+server.listen(3001)
+// server启动成功
+server.on('listening', () => {
+    console.log('https启动完成')
+})
 
-  // 添加日志以检查请求的 URL 和目标服务器的响应状态
-  console.log(`Request URL: ${req.url}`);
-
-  // 明确的路由条件
-  if (host === 'api.zeroapi.dns.navy') { // 替换为你的实际域名
-    console.log(`Proxying request for ${host} to http://data.zero777.dns.army`);
-    proxy.web(req, res, { target: 'http://data.zero777.dns.army' }, function (e) {
-      if (e) {
-        console.error('Proxy error:', e);
-        res.writeHead(500, {
-          'Content-Type': 'text/plain'
-        });
-        res.end('Proxying failed.');
-      }
-    });
-  } else {
-    res.writeHead(200, {
-      'Content-Type': 'text/plain'
-    });
-    res.end('Welcome to my server!');
-  }
-});
-
-console.log("listening on port 80");
-server.listen(80);
+// 关闭HTTPS服务器
+server.on('close', () => {
+    console.log('服务器关闭')
+})
