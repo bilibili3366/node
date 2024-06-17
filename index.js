@@ -6,6 +6,7 @@ var proxy = httpProxy.createProxyServer({});
 
 // 捕获异常
 proxy.on('error', function (err, req, res) {
+  console.error('Proxy error:', err);
   res.writeHead(500, {
     'Content-Type': 'text/plain'
   });
@@ -25,9 +26,10 @@ var server = http.createServer(function (req, res) {
 
   switch (host) {
     case 'api.zeroapi.dns.navy': // 替换为你的实际域名
+      console.log(`Proxying request for ${host} to https://api.7779888.shop`);
       proxy.web(req, res, { target: 'https://api.7779888.shop' });
       break;
-    
+
     default:
       res.writeHead(200, {
         'Content-Type': 'text/plain'
