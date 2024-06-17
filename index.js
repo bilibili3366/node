@@ -16,6 +16,14 @@ proxy.on('error', function (err, req, res) {
 // 监听代理请求的响应事件
 proxy.on('proxyRes', function (proxyRes, req, res) {
   console.log('RAW Response from the target', JSON.stringify(proxyRes.headers, true, 2));
+
+  if (proxyRes.statusCode === 301) {
+    console.log('Redirecting:', proxyRes.headers.location);
+    res.writeHead(301, {
+      'Location': proxyRes.headers.location
+    });
+    res.end();
+  }
 });
 
 // 创建 HTTP 服务器
@@ -28,9 +36,9 @@ var server = http.createServer(function (req, res) {
   console.log(`Request URL: ${req.url}`);
 
   // 明确的路由条件
-  if (host === 'api.zeroapi.dns.navy') { // 确保替换为你的实际域名
-    console.log(`Proxying request for ${host} to http://api.7779888.shop`);
-    proxy.web(req, res, { target: 'http://api.7779888.shop' }, function (e) {
+  if (host === 'api.zeroapi.dns.navy') { // 替换为你的实际域名
+    console.log(`Proxying request for ${host} to https://api.7779888.shop`);
+    proxy.web(req, res, { target: 'https://api.7779888.shop' }, function (e) {
       if (e) {
         console.error('Proxy error:', e);
         res.writeHead(500, {
