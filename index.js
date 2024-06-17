@@ -3,10 +3,7 @@ let https = require('https');
 const fs = require('fs');
 const path = require('path');
 
-const options = {
-    key: fs.readFileSync(path.join(__dirname, './key.pem')),
-    cert: fs.readFileSync(path.join(__dirname, './cert.pem')),
-};
+
 
 // 这是我们配置的域名，我们可以访问这些域名，拿到对应的结果
 let hosts = {
@@ -17,7 +14,7 @@ let hosts = {
 // 创建代理服务器
 let proxy = httpProxy.createProxyServer()
 
-let server = https.createServer(options, (req, res) => {
+let server = https.createServer((req, res) => {
     // 拿到host 访问对应的服务器
     let host = req.headers['host'].split(':')[0]
     console.log(666.789, host, hosts[host])
